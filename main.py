@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from controller.ClientiRotte import router as ClientiRotte
+from controller.MagazzinoRotte import router as MagazzinoRotte
 # from controller.SchedeRotte import router as schedaRotte
 
 webapp = FastAPI(
@@ -36,6 +37,7 @@ async def root(req: Request):
 	)
 
 webapp.include_router(ClientiRotte)
+webapp.include_router(MagazzinoRotte)
 # webapp.include_router(ClientiRotte)
 
 if __name__ == '__main__':
