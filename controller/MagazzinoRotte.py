@@ -19,6 +19,21 @@ async def getPagina(req: Request):
 	return templates.TemplateResponse(
 		'magazzino.html', {
 			'request': req,
-			#'oggetti': getAllMagazzino
+			'oggetti': getRicambi()
 		}
 	)
+
+@router.delete("/{id}")
+async def eliminaRicambio(id: int):
+	deleteRicambioByID(id)
+
+@router.get("/add")
+async def cambiaPag(req: Request):
+	return templates.TemplateResponse(
+		'magazzinoAdd.html', {
+			'request': req,
+		}
+	)
+@router.post("/add")
+async def addCliente(r: Ricambio):
+	aggiungiRicambio(r)

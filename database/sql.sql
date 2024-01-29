@@ -48,3 +48,11 @@ CREATE TABLE Pagamenti (
     FOREIGN KEY (FK_Riparazione) REFERENCES Riparazioni(ID)
 );
 
+CREATE table Ricambi(
+    id int PRIMARY KEY AUTO_INCREMENT,
+    tipo varchar(40) not null,
+    marca varchar(40),
+    modello varchar(40),
+    quantita int DEFAULT 0,
+    posizione varchar(40)
+);

@@ -19,3 +19,11 @@ INSERT INTO Clienti (nome, cognome, telefono, email) VALUES
 ('Silvia', 'Verdi', '666-444-2222', 'silvia.verdi@example.com'),
 ('Marco', 'Neri', '111-555-7777', 'marco.neri@example.com'),
 ('Alessandra', 'Gialli', '888-666-9999', 'alessandra.gialli@example.com');
+
+-- Inserimento di ricambi elettronici nel database
+INSERT INTO Ricambi (tipo, marca, modello, quantita, posizione) VALUES
+    ('Processore', 'Intel', 'i9-9900K', 10, 'Scaffale A1'),
+    ('Scheda Grafica', 'NVIDIA', 'RTX 3080', 15, 'Scaffale B2'),
+    ('SSD', 'Samsung', '970 EVO Plus', 20, 'Scaffale C3'),
+    ('Scheda Madre', 'ASUS', 'ROG Strix Z590', 8, 'Scaffale D4'),
+    ('Memoria RAM', 'Corsair', 'Vengeance LPX 16GB', 25, 'Scaffale E5');

@@ -1,6 +1,7 @@
 import mysql.connector as dbms
 
 from models.Clienti import Cliente
+from models.Ricambi import Ricambio
 
 def getConnection():
     return dbms.connect(
@@ -134,5 +135,123 @@ def getClientiFiltro(nome, cognome, id, telefono):
         cursore.close()
         connessione.close()
         return listaClienti
+
+def getRicambi():
+    connessione = getConnection()
+    if connessione.is_connected():
+        QUERY = "SELECT * FROM Ricambi"
+        listaRicambi = []
+        cursore = connessione.cursor()
+        cursore.execute(QUERY)
+        results = cursore.fetchall()
+        for row in results:
+            ricambio = Ricambio(
+                id=int(row[0]),
+                tipo=row[1],
+                marca=row[2],
+                modello=row[3],
+                quantita=int(row[4]),
+                posizione=row[5]
+            )
+            listaRicambi.append(ricambio)
+        cursore.close()
+        connessione.close()
+        return listaRicambi
+
+def aggiungiRicambio(ricambio: Ricambio):
+    connessione = getConnection()
+    if connessione.is_connected():
+        QUERY = "INSERT INTO Ricambi (tipo, marca, modello, quantita, posizione) VALUES (%s, %s, %s, %s, %s)"
+        dati_ricambio = (ricambio.tipo, ricambio.marca, ricambio.modello, ricambio.quantita, ricambio.posizione)
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, dati_ricambio)
+        connessione.commit()
+        nuovo_ricambio_id = cursore.lastrowid
+        cursore.close()
+        connessione.close()
+        return nuovo_ricambio_id
+
+
+def modificaRicambio(id: int, ricambio: Ricambio):
+    connessione = getConnection()
+    if connessione.is_connected():
+        QUERY = "UPDATE Ricambi SET tipo=%s, marca=%s, modello=%s, quantita=%s, posizione=%s WHERE id=%s"
+        dati_ricambio = (ricambio.tipo, ricambio.marca, ricambio.modello, ricambio.quantita, ricambio.posizione, id)
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, dati_ricambio)
+        connessione.commit()
+        cursore.close()
+        connessione.close()
+
+def getRicambiFiltro(tipo, marca, modello, quantita):
+    connessione = getConnection()
+    if connessione.is_connected():
+        # Costruisci la query in base ai valori forniti
+        QUERY = "SELECT * FROM Ricambi WHERE 1=1"
+        params = []
+
+        if tipo != "nullo":
+            QUERY += " AND tipo LIKE %s"
+            params.append(f"%{tipo}%")
+
+        if marca != "nullo":
+            QUERY += " AND marca LIKE %s"
+            params.append(f"%{marca}%")
+
+        if modello != "nullo":
+            QUERY += " AND modello LIKE %s"
+            params.append(f"%{modello}%")
+
+        if quantita != -1:
+            QUERY += " AND quantita = %s"
+            params.append(quantita)
+
+        listaRicambi = []
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, tuple(params))
+        results = cursore.fetchall()
+        for row in results:
+            ricambio = Ricambio(
+                id=int(row[0]),
+                tipo=row[1],
+                marca=row[2],
+                modello=row[3],
+                quantita=int(row[4]),
+                posizione=row[5]
+            )
+            listaRicambi.append(ricambio)
+        cursore.close()
+        connessione.close()
+        return listaRicambi
+
+
+def deleteRicambioByID(id: int):
+    connessione = getConnection()
+    if connessione.is_connected():
+        try:
+            # Inizia una transazione
+            connessione.start_transaction()
+
+            # Elimina il ricambio
+            query_ricambio = "DELETE FROM Ricambi WHERE ID = %s"
+            cursore = connessione.cursor()
+            cursore.execute(query_ricambio, (id,))
+
+            # Esegui il commit della transazione
+            connessione.commit()
+
+            # Chiudi il cursore
+            cursore.close()
+
+            # Chiudi la connessione
+            connessione.close()
+
+            return True  # Ritorna True se l'eliminazione ha avuto successo
+        except Exception as e:
+            # Rollback in caso di errore
+            connessione.rollback()
+            print(f"Errore durante l'eliminazione del ricambio: {e}")
+            return False  # Ritorna False in caso di errore
+    return False  # Ritorna False se la connessione non è riuscita
 
 
