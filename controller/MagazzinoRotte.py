@@ -37,3 +37,13 @@ async def cambiaPag(req: Request):
 @router.post("/add")
 async def addCliente(r: Ricambio):
 	aggiungiRicambio(r)
+
+@router.get("/filtro/{tipo}/{marca}/{modello}/{quantita}/{posizione}")
+async def filtraMagazzino(req: Request, tipo: str = "", marca: str = "", modello: str = "", quantita: int = 0, posizione: str = ""):
+	return templates.TemplateResponse(
+		'magazzino.html', {
+			'request': req,
+			'oggetti': getRicambiFiltro(tipo, marca, modello, quantita, posizione)
+		}
+	)
+

@@ -183,7 +183,7 @@ def modificaRicambio(id: int, ricambio: Ricambio):
         cursore.close()
         connessione.close()
 
-def getRicambiFiltro(tipo, marca, modello, quantita):
+def getRicambiFiltro(tipo, marca, modello, quantita, posizione):
     connessione = getConnection()
     if connessione.is_connected():
         # Costruisci la query in base ai valori forniti
@@ -201,6 +201,10 @@ def getRicambiFiltro(tipo, marca, modello, quantita):
         if modello != "nullo":
             QUERY += " AND modello LIKE %s"
             params.append(f"%{modello}%")
+
+        if posizione != "nullo":
+            QUERY += " AND posizione LIKE %s"
+            params.append(f"%{posizione}%")
 
         if quantita != -1:
             QUERY += " AND quantita = %s"

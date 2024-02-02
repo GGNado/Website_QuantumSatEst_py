@@ -56,14 +56,14 @@
 }
 
     async function filtra() {
-    const filterNome = document.getElementById('filterNome').value || "nullo";
-    const filterCognome = document.getElementById('filterCognome').value || "nullo";
-    const filterID = parseInt(document.getElementById('filterID').value) || -1;
-    const filterTelefono = document.getElementById('filterTelefono').value || "nullo";
+    const filterTipo = document.getElementById('filterTipo').value || "nullo";
+    const filterMarca = document.getElementById('filterMarca').value || "nullo";
+    const filterModello = document.getElementById('filterModello').value || "nullo";
+    const filterPosizione = document.getElementById('filterPosizione').value || "nullo";
+    const filterQuantita = parseInt(document.getElementById('filterQuantita').value) || -1;
 
-
-
-    const url = `/api/v1.0/clienti/filtro/${filterNome}/${filterCognome}/${filterID}/${filterTelefono}`;
+    const url = `/api/v1.0/magazzino/filtro/${filterTipo}/${filterMarca}/${filterModello}/${filterQuantita}/${filterPosizione}`;
+    //const url = `/api/v1.0/magazzino`;
 
     try {
         const response = await fetch(url);
@@ -136,6 +136,10 @@
             <div class="col-md-3">
                 <label for="filterQuantita" class="visually-hidden">Quantità</label>
                 <input type="number" class="form-control" id="filterQuantita" name="filterQuantita" placeholder="Quantità">
+            </div>
+            <div class="col-md-3">
+                <label for="filterPosizione" class="visually-hidden">Quantità</label>
+                <input type="text" class="form-control" id="filterPosizione" name="filterPosizione" placeholder="Posizione">
             </div>
         </form>
     </div>
