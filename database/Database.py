@@ -154,7 +154,8 @@ def getRicambi():
                 marca=row[2],
                 modello=row[3],
                 quantita=int(row[4]),
-                posizione=row[5]
+                posizione=row[5],
+                guasto=int(row[6])
             )
             listaRicambi.append(ricambio)
         cursore.close()
@@ -164,8 +165,8 @@ def getRicambi():
 def aggiungiRicambio(ricambio: Ricambio):
     connessione = getConnection()
     if connessione.is_connected():
-        QUERY = "INSERT INTO Ricambi (tipo, marca, modello, quantita, posizione) VALUES (%s, %s, %s, %s, %s)"
-        dati_ricambio = (ricambio.tipo, ricambio.marca, ricambio.modello, ricambio.quantita, ricambio.posizione)
+        QUERY = "INSERT INTO Ricambi (tipo, marca, modello, quantita, posizione, guasto) VALUES (%s, %s, %s, %s, %s, %s)"
+        dati_ricambio = (ricambio.tipo, ricambio.marca, ricambio.modello, ricambio.quantita, ricambio.posizione, ricambio.guasto)
         cursore = connessione.cursor()
         cursore.execute(QUERY, dati_ricambio)
         connessione.commit()
@@ -177,8 +178,8 @@ def aggiungiRicambio(ricambio: Ricambio):
 def updateRicambio(ricambio: Ricambio):
     connessione = getConnection()
     if connessione.is_connected():
-        QUERY = "UPDATE Ricambi SET tipo = %s, marca = %s, modello = %s, quantita = %s, posizione = %s WHERE ID = %s"
-        dati_cliente = (ricambio.tipo, ricambio.marca, ricambio.modello, ricambio.quantita, ricambio.posizione, ricambio.id)
+        QUERY = "UPDATE Ricambi SET tipo = %s, marca = %s, modello = %s, quantita = %s, posizione = %s, guasto = %s WHERE ID = %s"
+        dati_cliente = (ricambio.tipo, ricambio.marca, ricambio.modello, ricambio.quantita, ricambio.posizione, ricambio.guasto, ricambio.id)
 
         cursore = connessione.cursor()
         cursore.execute(QUERY, dati_cliente)
@@ -227,7 +228,8 @@ def getRicambiFiltro(tipo, marca, modello, quantita, posizione):
                 marca=row[2],
                 modello=row[3],
                 quantita=int(row[4]),
-                posizione=row[5]
+                posizione=row[5],
+                guasto=int(row[6])
             )
             listaRicambi.append(ricambio)
         cursore.close()
@@ -281,7 +283,8 @@ def getRicambioById(id):
                 marca=result[2],
                 modello=result[3],
                 quantita=int(result[4]),
-                posizione=result[5]
+                posizione=result[5],
+                guasto=int(result[6])
             )
         else:
             return None

@@ -29,14 +29,18 @@
         const posizione = document.getElementById('posizione').value || "Nessuna Posizione";
 
 
-        const formData = {
-            id: 0,
-            tipo: tipo,
-            marca: marca,
-            modello: modello,
-            quantita: quantita,
-            posizione: posizione
-        };
+        const guastoCheckbox = document.getElementById('guasto');
+        const guasto = guastoCheckbox.checked ? 1 : 0;
+
+    const formData = {
+        id: 0,
+        tipo: tipo,
+        marca: marca,
+        modello: modello,
+        quantita: quantita,
+        posizione: posizione,
+        guasto: guasto
+    };
 
         try {
             const response = await fetch('/api/v1.0/magazzino/add', {
@@ -116,6 +120,10 @@
                         <div class="mb-3">
                             <label for="posizione" class="form-label">Posizione</label>
                             <input type="text" class="form-control" id="posizione" name="posizione">
+                        </div>
+                        <div class="mb-3">
+                            <input type="checkbox" class="form-check-input" id="guasto" name="guasto">
+                            <label for="guasto" class="form-check-label">Guasto</label>
                         </div>
                         <button type="button" class="btn btn-primary" onclick="aggiungiRicambio()">Aggiungi</button>
                     </form>

@@ -29,6 +29,9 @@
         const quantita = parseInt(document.getElementById('quantita').value, 10);
         const posizione = document.getElementById('posizione').value || "Nessuna Posizione";
 
+        const guastoCheckbox = document.getElementById('guasto');
+        const guasto = guastoCheckbox.checked ? 1 : 0;
+
 
         const formData = {
             id: id,
@@ -36,7 +39,8 @@
             marca: marca,
             modello: modello,
             quantita: quantita,
-            posizione: posizione
+            posizione: posizione,
+            guasto: guasto
         };
 
         try {
@@ -121,6 +125,14 @@
                         <div class="mb-3">
                             <label for="posizione" class="form-label">Posizione</label>
                             <input type="text" class="form-control" id="posizione" name="posizione" value="{{oggetto.posizione}}">
+                        </div>
+                        <div class="mb-3">
+                            {%if oggetto.guasto == 1:%}
+                            <input type="checkbox" class="form-check-input" id="guasto" name="guasto" checked>
+                            {%else:%}
+                            <input type="checkbox" class="form-check-input" id="guasto" name="guasto">
+                            {%endif%}
+                            <label for="guasto" class="form-check-label">Guasto</label>
                         </div>
                         <button type="button" class="btn btn-primary" onclick="aggiungiRicambio()">Modifica</button>
                     </form>
