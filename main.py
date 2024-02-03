@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 
 from controller.ClientiRotte import router as ClientiRotte
 from controller.MagazzinoRotte import router as MagazzinoRotte
+from controller.RiparazioniRotte import router as RiparazioniRotte
 # from controller.SchedeRotte import router as schedaRotte
 
 webapp = FastAPI(
@@ -39,6 +40,7 @@ async def root(req: Request):
 webapp.include_router(ClientiRotte)
 webapp.include_router(MagazzinoRotte)
 # webapp.include_router(ClientiRotte)
+webapp.include_router(RiparazioniRotte)
 
 if __name__ == '__main__':
 	uvicorn.run(

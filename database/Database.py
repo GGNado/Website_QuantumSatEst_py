@@ -2,6 +2,9 @@ import mysql.connector as dbms
 
 from models.Clienti import Cliente
 from models.Ricambi import Ricambio
+from models.Riparazioni import Riparazione
+from datetime import date
+
 
 def getConnection():
     return dbms.connect(
@@ -171,17 +174,20 @@ def aggiungiRicambio(ricambio: Ricambio):
         connessione.close()
         return nuovo_ricambio_id
 
-
-def modificaRicambio(id: int, ricambio: Ricambio):
+def updateRicambio(ricambio: Ricambio):
     connessione = getConnection()
     if connessione.is_connected():
-        QUERY = "UPDATE Ricambi SET tipo=%s, marca=%s, modello=%s, quantita=%s, posizione=%s WHERE id=%s"
-        dati_ricambio = (ricambio.tipo, ricambio.marca, ricambio.modello, ricambio.quantita, ricambio.posizione, id)
+        QUERY = "UPDATE Ricambi SET tipo = %s, marca = %s, modello = %s, quantita = %s, posizione = %s WHERE ID = %s"
+        dati_cliente = (ricambio.tipo, ricambio.marca, ricambio.modello, ricambio.quantita, ricambio.posizione, ricambio.id)
+
         cursore = connessione.cursor()
-        cursore.execute(QUERY, dati_ricambio)
+        cursore.execute(QUERY, dati_cliente)
         connessione.commit()
         cursore.close()
         connessione.close()
+
+        # Verifica se l'update ha avuto successo
+        return cursore.rowcount > 0
 
 def getRicambiFiltro(tipo, marca, modello, quantita, posizione):
     connessione = getConnection()
@@ -257,5 +263,53 @@ def deleteRicambioByID(id: int):
             print(f"Errore durante l'eliminazione del ricambio: {e}")
             return False  # Ritorna False in caso di errore
     return False  # Ritorna False se la connessione non è riuscita
+
+def getRicambioById(id):
+    connessione = getConnection()
+    if connessione.is_connected():
+        QUERY = "SELECT * FROM Ricambi WHERE ID = %s"
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, (id,))
+        result = cursore.fetchone()
+        cursore.close()
+        connessione.close()
+
+        if result:
+            return Ricambio(
+                id=int(result[0]),
+                tipo=result[1],
+                marca=result[2],
+                modello=result[3],
+                quantita=int(result[4]),
+                posizione=result[5]
+            )
+        else:
+            return None
+
+def getRiparazioni():
+    connessione = getConnection()
+    if connessione.is_connected():
+        QUERY = "SELECT * From Riparazioni"
+        listaRiparazione = []
+        cursore = connessione.cursor()
+        cursore.execute(QUERY)
+        results = cursore.fetchall()
+        for row in results:
+            listaRiparazione.append(Riparazione(
+                id=int(row[0]),
+                dataIngresso=row[1],
+                dataUscita=row[2] if row[2] else date.min,  # Assicurati che la data di uscita sia disponibile nel risultato della query
+                descrizioneGuasto=str(row[3]),
+                descrizioneRiparazione=str(row[4]),
+                prezzo=float(row[5]),
+                fk_cliente=int(row[6]),
+                fk_stato_riparazione=int(row[7])
+            ))
+        cursore.close()
+        connessione.close()
+        return listaRiparazione
+
+
+
 
 

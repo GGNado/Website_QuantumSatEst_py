@@ -38,6 +38,19 @@ async def cambiaPag(req: Request):
 async def addCliente(r: Ricambio):
 	aggiungiRicambio(r)
 
+@router.get("/{id}/edit")
+async def cambiaPag(req: Request, id: int):
+	return templates.TemplateResponse(
+		'magazzinoEdit.html', {
+			'request': req,
+			'oggetto': getRicambioById(id)
+		}
+	)
+
+@router.put("/edit")
+async def editMagazzino(oggetto: Ricambio):
+	updateRicambio(oggetto)
+
 @router.get("/filtro/{tipo}/{marca}/{modello}/{quantita}/{posizione}")
 async def filtraMagazzino(req: Request, tipo: str = "", marca: str = "", modello: str = "", quantita: int = 0, posizione: str = ""):
 	return templates.TemplateResponse(
