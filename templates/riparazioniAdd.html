@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Riparazioni e Assistenza</title>
+    <link rel="icon" href="../static/icon.png" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        body {
+            padding-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 56px;
+            }
+        }
+    </style>
+</head>
+<body>
+<script>
+    async function aggiungiRiparazione(id) {
+        const descrizioneGuasto = document.getElementById('descrizioneGuasto').value;
+        const nomeOggetto = document.getElementById('nomeOggetto').value;
+        const marcaOggetto = document.getElementById('marcaOggetto').value || "Nessuna Marca";
+        const modelloOggetto = document.getElementById('modelloOggetto').value || "Nessun Modello";
+        const matricolaOggetto = document.getElementById('matricolaOggetto').value || "Nessuna Matricola";
+        const prezzo = parseFloat(document.getElementById('prezzo').value) || 0.0;
+        const componentiExtra = document.getElementById('componentiExtra').value || "Nessun Componente Extra";
+
+        const formData = {
+            id: id,
+            descrizioneGuasto: descrizioneGuasto,
+            nomeOggetto: nomeOggetto,
+            marcaOggetto: marcaOggetto,
+            modelloOggetto: modelloOggetto,
+            matricolaOggetto: matricolaOggetto,
+            prezzo: prezzo,
+            componentiExtra: componentiExtra
+        };
+
+        try {
+            const response = await fetch('/api/v1.0/riparazioni/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                console.log('Dati inviati con successo!');
+                alert('Ricambio aggiunto correttamente');
+                window.location.href = '/api/v1.0/riparazioni/';
+            } else {
+                console.error('Si è verificato un errore durante l\'invio dei dati.');
+            }
+        } catch (error) {
+            console.error('Si è verificato un errore durante l\'invio dei dati:', error);
+        }
+    }
+</script>
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">🛠️ Riparazioni</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/api/v1.0/clienti/">Clienti</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Riparazioni</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Oggetti Riparati</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/api/v1.0/magazzino/">Magazzino</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<section class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Aggiungi Riparazione
+                </div>
+                <div class="card-body">
+                    <form id="ricambioForm" method="post">
+                        <div class="mb-3">
+                            <label for="descrizioneGuasto" class="form-label">Descrizione Guasto</label>
+                            <input type="text" class="form-control" id="descrizioneGuasto" name="descrizioneGuasto" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nomeOggetto" class="form-label">Nome dell'Oggetto</label>
+                            <input type="text" class="form-control" id="nomeOggetto" name="nomeOggetto" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="marcaOggetto" class="form-label">Marca dell'Oggetto</label>
+                            <input type="text" class="form-control" id="marcaOggetto" name="marcaOggetto">
+                        </div>
+                        <div class="mb-3">
+                            <label for="modelloOggetto" class="form-label">Modello dell'Oggetto</label>
+                            <input type="text" class="form-control" id="modelloOggetto" name="modelloOggetto">
+                        </div>
+                        <div class="mb-3">
+                            <label for="matricolaOggetto" class="form-label">Matricola dell'Oggetto</label>
+                            <input type="text" class="form-control" id="matricolaOggetto" name="matricolaOggetto">
+                        </div>
+                        <div class="mb-3">
+                            <label for="prezzo" class="form-label">Prezzo Ipotetico</label>
+                            <input type="number" class="form-control" id="prezzo" name="prezzo" value="0.0" step="0.01">
+                        </div>
+                        <div class="mb-3">
+                            <label for="componentiExtra" class="form-label">Componenti Extra</label>
+                            <input type="text" class="form-control" id="componentiExtra" name="componentiExtra">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="aggiungiRiparazione({{cliente.id}})">Aggiungi</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

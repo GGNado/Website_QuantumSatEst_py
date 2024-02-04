@@ -54,6 +54,22 @@
             console.error('Errore nella richiesta GET:', error);
         });
 }
+    async function getRiparazioni(id) {
+    // Effettua una richiesta GET all'API con l'ID del cliente
+    fetch(`/api/v1.0/riparazioni/${id}`)
+        .then(response => {
+            // Gestisci la risposta come desideri
+            if (response.ok) {
+                // Esegui il reindirizzamento alla pagina desiderata
+                window.location.href = `/api/v1.0/riparazioni/${id}`;
+            } else {
+                console.error('Errore nella richiesta GET per il cliente');
+            }
+        })
+        .catch(error => {
+            console.error('Errore nella richiesta GET:', error);
+        });
+}
 
     async function filtra() {
     const filterNome = document.getElementById('filterNome').value || "nullo";
@@ -163,7 +179,7 @@
                     <div>
                         <button class="btn btn-danger btn-sm" onclick="eliminaCliente({{c.id}})">Elimina</button>
                         <button class="btn btn-primary btn-sm" onclick="modificaCliente({{c.id}})">Modifica</button>
-                        <button class="btn btn-success btn-sm">Riparazioni</button>
+                        <button class="btn btn-success btn-sm" onclick="getRiparazioni({{c.id}})">Riparazioni</button>
                     </div>
                 </div>
                 <div class="card-body d-flex">

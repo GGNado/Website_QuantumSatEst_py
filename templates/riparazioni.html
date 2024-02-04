@@ -144,21 +144,30 @@
         </form>
     </div>
 </div>
+    {% if cliente is none:%}
     <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card d-flex flex-column h-100">
-                <div class="card-header">
-                    Aggiungi in Magazzino
-                </div>
-                <div class="card-body d-flex align-items-center justify-content-center">
-                    <a href="/api/v1.0/magazzino/add">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-                            <path d="M7 0h2v16H7V0zM0 7v2h16V7H0z"/>
-                        </svg>
-                    </a>
+    <div class="col-md-12 mt-4">
+        <p class="text-muted">Per aggiungere le Riparazioni, vai nella sezione Clienti.</p>
+    </div>
+    {%endif%}
+</div>
+    <div class="row">
+        {% if cliente: %}
+            <div class="col-md-4 mb-4">
+                <div class="card d-flex flex-column h-100">
+                    <div class="card-header">
+                        Aggiungi Riparazione
+                    </div>
+                    <div class="card-body d-flex align-items-center justify-content-center">
+                        <a href="/api/v1.0/riparazioni/{{cliente.id}}/add">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                <path d="M7 0h2v16H7V0zM0 7v2h16V7H0z"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
+        {%endif%}
         {% for c in riparazioni %}
         <div class="col-md-4 mb-4">
     <div class="card d-flex flex-column h-100">
@@ -175,7 +184,7 @@
                     <h5 class="card-title">Descrizione Guasto: {{ c.descrizioneGuasto }}</h5>
                     <p class="card-text">Descrizione Riparazione: {{ c.descrizioneRiparazione }} </p>
                     <p class="card-text">Prezzo: {{ c.prezzo }}</p>
-                    <p class="card-text">Cliente: {{ c.fk_cliente }}</p>
+                    <p class="card-text">Cliente: {{c.clienteDaIdRip()}}</p>
                     <p class="card-text">Data Ingresso: {{ c.dataIngresso }}</p>
                     <p class="card-text">Data Uscita: {{ c.dataUscita }}</p>
                     <!-- Aggiungi altri campi se necessario -->

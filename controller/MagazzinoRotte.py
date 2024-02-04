@@ -51,12 +51,12 @@ async def cambiaPag(req: Request, id: int):
 async def editMagazzino(oggetto: Ricambio):
 	updateRicambio(oggetto)
 
-@router.get("/filtro/{tipo}/{marca}/{modello}/{quantita}/{posizione}")
-async def filtraMagazzino(req: Request, tipo: str = "", marca: str = "", modello: str = "", quantita: int = 0, posizione: str = ""):
+@router.get("/filtro/{tipo}/{marca}/{modello}/{quantita}/{posizione}/{guasto}")
+async def filtraMagazzino(req: Request, tipo: str = "", marca: str = "", modello: str = "", quantita: int = 0, posizione: str = "", guasto: int = 0):
 	return templates.TemplateResponse(
 		'magazzino.html', {
 			'request': req,
-			'oggetti': getRicambiFiltro(tipo, marca, modello, quantita, posizione)
+			'oggetti': getRicambiFiltro(tipo, marca, modello, quantita, posizione, guasto)
 		}
 	)
 

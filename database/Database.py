@@ -3,6 +3,7 @@ import mysql.connector as dbms
 from models.Clienti import Cliente
 from models.Ricambi import Ricambio
 from models.Riparazioni import Riparazione
+from models.RiparazioniOggetti import RiparazioneInput
 from datetime import date
 
 
@@ -190,7 +191,7 @@ def updateRicambio(ricambio: Ricambio):
         # Verifica se l'update ha avuto successo
         return cursore.rowcount > 0
 
-def getRicambiFiltro(tipo, marca, modello, quantita, posizione):
+def getRicambiFiltro(tipo, marca, modello, quantita, posizione, guasto):
     connessione = getConnection()
     if connessione.is_connected():
         # Costruisci la query in base ai valori forniti
@@ -216,6 +217,10 @@ def getRicambiFiltro(tipo, marca, modello, quantita, posizione):
         if quantita != -1:
             QUERY += " AND quantita = %s"
             params.append(quantita)
+
+        if guasto != -1:
+            QUERY += " AND guasto = %s"
+            params.append(guasto)
 
         listaRicambi = []
         cursore = connessione.cursor()
@@ -311,6 +316,71 @@ def getRiparazioni():
         cursore.close()
         connessione.close()
         return listaRiparazione
+
+def getRiparazioniByFK_Cliente(id: int):
+    connessione = getConnection()
+    if connessione.is_connected():
+        QUERY = "SELECT * From Riparazioni WHERE FK_Cliente = %s"
+        listaRiparazione = []
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, (id, ))
+        results = cursore.fetchall()
+        for row in results:
+            listaRiparazione.append(Riparazione(
+                id=int(row[0]),
+                dataIngresso=row[1],
+                dataUscita=row[2] if row[2] else date.min,  # Assicurati che la data di uscita sia disponibile nel risultato della query
+                descrizioneGuasto=str(row[3]),
+                descrizioneRiparazione=str(row[4]),
+                prezzo=float(row[5]),
+                fk_cliente=int(row[6]),
+                fk_stato_riparazione=int(row[7])
+            ))
+        cursore.close()
+        connessione.close()
+        return listaRiparazione
+
+
+def addRiparazioni(rip: RiparazioneInput):
+    connessione = getConnection()
+    if connessione.is_connected():
+        # Prima query per inserire dati nella tabella Riparazioni
+        QUERY = "INSERT INTO Riparazioni (dataIngresso, descrizioneGuasto, prezzo, FK_Cliente, FK_StatoRiparazione) VALUES (%s, %s, %s, %s, %s)"
+        datiRiparazione = (date.today(), rip.descrizioneGuasto, rip.prezzo, rip.id, 1)
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, datiRiparazione)
+        connessione.commit()
+
+        # Ottieni l'ID dell'ultima riga inserita nella tabella Riparazioni
+        nuovo_ricambio_id = cursore.lastrowid
+
+        # Seconda query per inserire dati nella tabella corretta
+        QUERYSec = "INSERT INTO Oggetti (nome, marca, modello, matricola, fk_riparazione, extra) VALUES (%s, %s, %s, %s, %s, %s)"
+        datiOgg = (rip.nomeOggetto, rip.marcaOggetto, rip.modelloOggetto, rip.matricolaOggetto, nuovo_ricambio_id,
+                   rip.componentiExtra)
+        cursore.execute(QUERYSec, datiOgg)
+        connessione.commit()
+
+        cursore.close()
+        connessione.close()
+
+        return nuovo_ricambio_id
+
+def getNomeCognomeClienteByRiparazioneId(riparazione_id: int):
+    connessione = getConnection()
+    if connessione.is_connected():
+        QUERY = "SELECT C.nome, C.cognome FROM Clienti C INNER JOIN Riparazioni R ON C.ID = R.FK_Cliente WHERE R.ID = %s"
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, (riparazione_id,))
+        result = cursore.fetchone()
+        cursore.close()
+        connessione.close()
+
+        if result:
+            return str(result[0]) + " " +  str(result[1])  # Ritorna il nome e il cognome del cliente
+        else:
+            return None, None  # Ritorna None se non è stato trovato nessun cliente associato alla riparazione
+
 
 
 

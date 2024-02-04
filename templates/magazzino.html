@@ -40,7 +40,7 @@
 
     async function modificaRicambio(id) {
     // Effettua una richiesta GET all'API con l'ID del cliente
-    fetch(`/api/v1.0/clienti/${id}/edit`)
+    fetch(`/api/v1.0/magazzino/${id}/edit`)
         .then(response => {
             // Gestisci la risposta come desideri
             if (response.ok) {
@@ -62,7 +62,17 @@
     const filterPosizione = document.getElementById('filterPosizione').value || "nullo";
     const filterQuantita = parseInt(document.getElementById('filterQuantita').value) || -1;
 
-    const url = `/api/v1.0/magazzino/filtro/${filterTipo}/${filterMarca}/${filterModello}/${filterQuantita}/${filterPosizione}`;
+    // Ottieni il valore dello stato selezionato
+    let stato = -1; // Valore di default o valore non selezionato
+    const statoRadioButtons = document.getElementsByName('stato');
+    for (const radioButton of statoRadioButtons) {
+        if (radioButton.checked) {
+            stato = radioButton.value === 'funzionante' ? 0 : (radioButton.value === 'guasto' ? 1 : -1);
+            break;
+        }
+    }
+
+    const url = `/api/v1.0/magazzino/filtro/${filterTipo}/${filterMarca}/${filterModello}/${filterQuantita}/${filterPosizione}/${stato}`;
     //const url = `/api/v1.0/magazzino`;
 
     try {
@@ -140,6 +150,18 @@
             <div class="col-md-3">
                 <label for="filterPosizione" class="visually-hidden">Quantità</label>
                 <input type="text" class="form-control" id="filterPosizione" name="filterPosizione" placeholder="Posizione">
+            </div>
+            <div class="mb-3">
+                <input type="radio" class="form-check-input" id="guasto" name="stato" value="guasto">
+                <label for="guasto" class="form-check-label">Guasto</label>
+            </div>
+            <div class="mb-3">
+                <input type="radio" class="form-check-input" id="funzionante" name="stato" value="funzionante">
+                <label for="funzionante" class="form-check-label">Funzionante</label>
+            </div>
+            <div class="mb-3">
+                <input type="radio" class="form-check-input" id="funzionante_guasto" name="stato" value="funzionante_guasto">
+                <label for="funzionante_guasto" class="form-check-label">Funzionante/Guasto</label>
             </div>
         </form>
     </div>
