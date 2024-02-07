@@ -21,9 +21,9 @@
 </head>
 <body>
 <script>
-    async function eliminaRicambio(id) {
+    async function eliminaRiparazione(id) {
         try {
-            const response = await fetch(`/api/v1.0/magazzino/${id}`, {
+            const response = await fetch(`/api/v1.0/riparazioni/${id}`, {
                 method: 'DELETE'
             });
 
@@ -38,14 +38,14 @@
         }
     }
 
-    async function modificaRicambio(id) {
+    async function modificaRiparazione(id) {
     // Effettua una richiesta GET all'API con l'ID del cliente
-    fetch(`/api/v1.0/clienti/${id}/edit`)
+    fetch(`/api/v1.0/riparazioni/${id}/edit`)
         .then(response => {
             // Gestisci la risposta come desideri
             if (response.ok) {
                 // Esegui il reindirizzamento alla pagina desiderata
-                window.location.href = `/api/v1.0/magazzino/${id}/edit`;
+                window.location.href = `/api/v1.0/riparazioni/${id}/edit`;
             } else {
                 console.error('Errore nella richiesta GET per il cliente');
             }
@@ -181,13 +181,22 @@
         <div class="card-body d-flex">
             <div class="d-flex align-items-center">
                 <div>
-                    <h5 class="card-title">Descrizione Guasto: {{ c.descrizioneGuasto }}</h5>
+                    <h5 class="card-text">Stato: {{ c.stato() }}</h5>
+                    <p class="card-title">Descrizione Guasto: {{ c.descrizioneGuasto }}</p>
                     <p class="card-text">Descrizione Riparazione: {{ c.descrizioneRiparazione }} </p>
                     <p class="card-text">Prezzo: {{ c.prezzo }}</p>
                     <p class="card-text">Cliente: {{c.clienteDaIdRip()}}</p>
                     <p class="card-text">Data Ingresso: {{ c.dataIngresso }}</p>
-                    <p class="card-text">Data Uscita: {{ c.dataUscita }}</p>
-                    <!-- Aggiungi altri campi se necessario -->
+                    {%if c.dataUscita|string == "0001-01-01" %}
+                        <p class="card-text">Data Uscita: Non disponibile</p>
+                    {%else:%}
+                        <p class="card-text">Data Uscita: {{c.dataUscita}}</p>
+                    {%endif%}
+                    <h5>Oggetto da Riparare</h5>
+                    <p class="card-text">Nome: {{c.getNomeOggetto()}}</p>
+                    <p class="card-text">Marca: {{c.getMarcaOggetto()}}</p>
+                    <p class="card-text">Modello: {{c.getModelloOggetto()}}</p>
+                    <p class="card-text">Matricola: {{c.getMatricolaOggetto()}}</p>
                 </div>
             </div>
         </div>

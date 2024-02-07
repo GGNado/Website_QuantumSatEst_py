@@ -310,7 +310,7 @@ def getRiparazioni():
                 descrizioneGuasto=str(row[3]),
                 descrizioneRiparazione=str(row[4]),
                 prezzo=float(row[5]),
-                fk_cliente=int(row[6]),
+                fk_cliente=int(row[6] if row[6] else -1),
                 fk_stato_riparazione=int(row[7])
             ))
         cursore.close()
@@ -380,6 +380,125 @@ def getNomeCognomeClienteByRiparazioneId(riparazione_id: int):
             return str(result[0]) + " " +  str(result[1])  # Ritorna il nome e il cognome del cliente
         else:
             return None, None  # Ritorna None se non è stato trovato nessun cliente associato alla riparazione
+
+def deleteRiparazione(id: int):
+    connessione = getConnection()
+    if connessione.is_connected():
+        try:
+            # Inizia una transazione
+            connessione.start_transaction()
+
+            # Elimina il ricambio
+            query_ricambio = "DELETE FROM Riparazioni WHERE ID = %s"
+            cursore = connessione.cursor()
+            cursore.execute(query_ricambio, (id,))
+
+            # Esegui il commit della transazione
+            connessione.commit()
+
+            # Chiudi il cursore
+            cursore.close()
+
+            # Chiudi la connessione
+            connessione.close()
+
+            return True  # Ritorna True se l'eliminazione ha avuto successo
+        except Exception as e:
+            # Rollback in caso di errore
+            connessione.rollback()
+            print(f"Errore durante l'eliminazione della riparazione: {e}")
+            return False  # Ritorna False in caso di errore
+    return False  # Ritorna False se la connessione non è riuscita
+
+def updateRiparazioni(rip: RiparazioneInput):
+    connessione = getConnection()
+    if connessione.is_connected():
+        # Prima query per inserire dati nella tabella Riparazioni
+        QUERY = "UPDATE Riparazioni SET descrizioneGuasto = %s, prezzo = %s WHERE ID = %s"
+        datiRiparazione = (rip.descrizioneGuasto, rip.prezzo, rip.id)
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, datiRiparazione)
+        connessione.commit()
+
+        # Seconda query per inserire dati nella tabella corretta
+        QUERYSec = "UPDATE Oggetti SET nome = %s, marca = %s, modello = %s, matricola = %s, extra = %s WHERE FK_Riparazione = %s"
+        datiOgg = (rip.nomeOggetto, rip.marcaOggetto, rip.modelloOggetto, rip.matricolaOggetto, rip.componentiExtra, rip.id)
+        cursore.execute(QUERYSec, datiOgg)
+        connessione.commit()
+
+        cursore.close()
+        connessione.close()
+
+        return rip.id
+
+def getRiparazioniById(id: int):
+    con = getConnection()
+    if con.is_connected():
+        QUERY = "SELECT Riparazioni.ID, descrizioneGuasto, o.nome, o.marca, o.modello, o.matricola, prezzo, o.extra FROM Riparazioni JOIN Oggetti o on Riparazioni.ID = o.FK_Riparazione WHERE FK_Riparazione = %s"
+        cursore = con.cursor()
+        cursore.execute(QUERY, (id,))
+        results = cursore.fetchall()
+        cursore.close()
+        con.close()
+
+        for row in results:
+            rip = RiparazioneInput(
+                id=int(row[0]),
+                descrizioneGuasto=row[1],
+                nomeOggetto=row[2],
+                marcaOggetto=row[3],
+                modelloOggetto=row[4],
+                matricolaOggetto=row[5],
+                prezzo=float(row[6]),
+                componentiExtra=row[7]
+            )
+            return rip
+        else:
+            return None
+
+def getNameObject(id: int):
+    connessione = getConnection()
+    if connessione.is_connected():
+        QUERY = "SELECT nome from Oggetti WHERE FK_Riparazione = %s"
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, (id,))
+        results = cursore.fetchall()
+        cursore.close()
+        connessione.close()
+        return results[0][0]
+
+def getMarcaObject(id: int):
+    connessione = getConnection()
+    if connessione.is_connected():
+        QUERY = "SELECT marca from Oggetti WHERE FK_Riparazione = %s"
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, (id,))
+        results = cursore.fetchall()
+        cursore.close()
+        connessione.close()
+        return results[0][0]
+
+def getModelloObject(id: int):
+    connessione = getConnection()
+    if connessione.is_connected():
+        QUERY = "SELECT modello from Oggetti WHERE FK_Riparazione = %s"
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, (id,))
+        results = cursore.fetchall()
+        cursore.close()
+        connessione.close()
+        return results[0][0]
+
+def getMatricolaObject(id: int):
+    connessione = getConnection()
+    if connessione.is_connected():
+        QUERY = "SELECT matricola from Oggetti WHERE FK_Riparazione = %s"
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, (id,))
+        results = cursore.fetchall()
+        cursore.close()
+        connessione.close()
+        return results[0][0]
 
 
 

@@ -47,3 +47,19 @@ async def getPagina(id: int, req: Request):
 async def aggiungiRiparazione(rip: RiparazioneInput):
 	addRiparazioni(rip)
 
+@router.delete("/{id}")
+async def eliminaRiparazione(id: int):
+	deleteRiparazione(id)
+
+@router.put("/edit")
+async def modificaRiparazione(rip: RiparazioneInput):
+	updateRiparazioni(rip)
+
+@router.get("/{id}/edit")
+async def cambiaPag(req: Request, id: int):
+	return templates.TemplateResponse(
+		'RiparazioniEdit.html', {
+			'request': req,
+			'rip': getRiparazioniById(id)
+		}
+	)
