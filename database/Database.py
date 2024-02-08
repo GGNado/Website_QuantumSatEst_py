@@ -455,7 +455,7 @@ def getRiparazioniById(id: int):
                 matricolaOggetto=row[5],
                 prezzo=float(row[6]),
                 componentiExtra=row[7],
-                descrizioneRiparazione=row[8]
+                descrizioneRiparazione=row[8] if row[8] else "Nessuna Riparazione"
             )
             return rip
         else:
