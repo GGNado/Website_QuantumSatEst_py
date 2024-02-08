@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Riparazioni e Assistenza</title>
+    <link rel="icon" href="../static/icon.png" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        body {
+            padding-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 56px;
+            }
+        }
+    </style>
+</head>
+<body>
+<script>
+    async function completaRiparazione(id) {
+        const descrizioneRiparazione = document.getElementById('descrizioneRiparazione').value;
+        const prezzo = parseFloat(document.getElementById('prezzo').value) || 0.0;
+        const statoRiparazione = document.getElementById('statoRiparazione').value;
+
+        const formData = {
+            id: id,
+            descrizioneRiparazione: descrizioneRiparazione,
+            prezzo: prezzo,
+            statoRiparazione: statoRiparazione
+        };
+
+        try {
+            const response = await fetch('/api/v1.0/riparazioni/completa', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                console.log('Dati inviati con successo!');
+                alert('Riparazione completata correttamente');
+                window.location.href = '/api/v1.0/riparazioni/';
+            } else {
+                console.error('Si è verificato un errore durante l\'invio dei dati.');
+            }
+        } catch (error) {
+            console.error('Si è verificato un errore durante l\'invio dei dati:', error);
+        }
+    }
+</script>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">🛠️ Riparazioni</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/api/v1.0/clienti/">Clienti</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Riparazioni</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Oggetti Riparati</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/api/v1.0/magazzino/">Magazzino</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<section class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Modifica Riparazione
+                </div>
+                <div class="card-body">
+                    <form id="ricambioForm" method="post">
+                        <div class="mb-3">
+                            <label for="descrizioneRiparazione" class="form-label">Descrizione Riparazione</label>
+                            <input type="text" class="form-control" id="descrizioneRiparazione" name="descrizioneRiparazione" required value="{{rip.descrizioneRiparazione}}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="prezzo" class="form-label">Prezzo</label>
+                            <input type="number" class="form-control" id="prezzo" name="prezzo" value="{{rip.prezzo}}" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="statoRiparazione" class="form-label">Stato Riparazione</label>
+                            <select class="form-select" id="statoRiparazione" name="statoRiparazione">
+                                <option value="Completata">Completata</option>
+                                <option value="Ritirata ma non Pagata">Ritirata ma non Pagata</option>
+                                <option value="Ritirata e Pagata">Ritirata e Pagata</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="completaRiparazione({{rip.id}})">Completa Riparazione</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

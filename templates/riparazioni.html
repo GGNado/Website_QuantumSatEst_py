@@ -55,6 +55,23 @@
         });
 }
 
+async function completaRiparazione(id) {
+    // Effettua una richiesta GET all'API con l'ID del cliente
+    fetch(`/api/v1.0/riparazioni/${id}/completa`)
+        .then(response => {
+            // Gestisci la risposta come desideri
+            if (response.ok) {
+                // Esegui il reindirizzamento alla pagina desiderata
+                window.location.href = `/api/v1.0/riparazioni/${id}/completa`;
+            } else {
+                console.error('Errore nella richiesta GET per il cliente');
+            }
+        })
+        .catch(error => {
+            console.error('Errore nella richiesta GET:', error);
+        });
+}
+
     async function filtra() {
     const filterTipo = document.getElementById('filterTipo').value || "nullo";
     const filterMarca = document.getElementById('filterMarca').value || "nullo";
@@ -174,6 +191,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <span>Riparazione</span>
             <div>
+                <button class="btn btn-success btn-sm" onclick="completaRiparazione({{c.id}})">Completa</button>
                 <button class="btn btn-danger btn-sm" onclick="eliminaRiparazione({{c.id}})">Elimina</button>
                 <button class="btn btn-primary btn-sm" onclick="modificaRiparazione({{c.id}})">Modifica</button>
             </div>
@@ -187,6 +205,11 @@
                     <p class="card-text">Prezzo: {{ c.prezzo }}</p>
                     <p class="card-text">Cliente: {{c.clienteDaIdRip()}}</p>
                     <p class="card-text">Data Ingresso: {{ c.dataIngresso }}</p>
+                    {%if c.dataCompletata|string == "0001-01-01" %}
+                        <p class="card-text">Data Completata: Non disponibile</p>
+                    {%else:%}
+                        <p class="card-text">Data Completata: {{c.dataCompletata}}</p>
+                    {%endif%}
                     {%if c.dataUscita|string == "0001-01-01" %}
                         <p class="card-text">Data Uscita: Non disponibile</p>
                     {%else:%}

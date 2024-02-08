@@ -3,6 +3,7 @@ import mysql.connector as dbms
 from models.Clienti import Cliente
 from models.Ricambi import Ricambio
 from models.Riparazioni import Riparazione
+from models.RiparazioniCompletata import RiparazioneCompletata
 from models.RiparazioniOggetti import RiparazioneInput
 from datetime import date
 
@@ -311,7 +312,8 @@ def getRiparazioni():
                 descrizioneRiparazione=str(row[4]),
                 prezzo=float(row[5]),
                 fk_cliente=int(row[6] if row[6] else -1),
-                fk_stato_riparazione=int(row[7])
+                fk_stato_riparazione=int(row[7]),
+                dataCompletata=row[8] if row[8] else date.min
             ))
         cursore.close()
         connessione.close()
@@ -334,7 +336,9 @@ def getRiparazioniByFK_Cliente(id: int):
                 descrizioneRiparazione=str(row[4]),
                 prezzo=float(row[5]),
                 fk_cliente=int(row[6]),
-                fk_stato_riparazione=int(row[7])
+                fk_stato_riparazione=int(row[7]),
+                dataCompletata=row[8] if row[8] else date.min
+
             ))
         cursore.close()
         connessione.close()
@@ -434,7 +438,7 @@ def updateRiparazioni(rip: RiparazioneInput):
 def getRiparazioniById(id: int):
     con = getConnection()
     if con.is_connected():
-        QUERY = "SELECT Riparazioni.ID, descrizioneGuasto, o.nome, o.marca, o.modello, o.matricola, prezzo, o.extra FROM Riparazioni JOIN Oggetti o on Riparazioni.ID = o.FK_Riparazione WHERE FK_Riparazione = %s"
+        QUERY = "SELECT Riparazioni.ID, descrizioneGuasto, o.nome, o.marca, o.modello, o.matricola, prezzo, o.extra, Riparazioni.descrizioneRiparazione FROM Riparazioni JOIN Oggetti o on Riparazioni.ID = o.FK_Riparazione WHERE FK_Riparazione = %s"
         cursore = con.cursor()
         cursore.execute(QUERY, (id,))
         results = cursore.fetchall()
@@ -450,7 +454,8 @@ def getRiparazioniById(id: int):
                 modelloOggetto=row[4],
                 matricolaOggetto=row[5],
                 prezzo=float(row[6]),
-                componentiExtra=row[7]
+                componentiExtra=row[7],
+                descrizioneRiparazione=row[8]
             )
             return rip
         else:
@@ -499,6 +504,25 @@ def getMatricolaObject(id: int):
         cursore.close()
         connessione.close()
         return results[0][0]
+
+def completeRiparazione(rip: RiparazioneCompletata):
+    connessione = getConnection()
+    if connessione.is_connected():
+        # Prima query per inserire dati nella tabella Riparazioni
+        if rip.statoRiparazione == "Completata":
+            QUERY = "UPDATE Riparazioni SET descrizioneRiparazione = %s, dataCompletata = %s, prezzo = %s, FK_StatoRiparazione = %s WHERE ID = %s"
+        else:
+            QUERY = "UPDATE Riparazioni SET descrizioneRiparazione = %s, dataUscita = %s, prezzo = %s, FK_StatoRiparazione = %s WHERE ID = %s"
+
+        datiRiparazione = (rip.descrizioneRiparazione, date.today(), rip.prezzo, rip.statoToInt(), rip.id)
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, datiRiparazione)
+        connessione.commit()
+        cursore.close()
+        connessione.close()
+
+
+
 
 
 

@@ -8,6 +8,7 @@ from database import Database
 class Riparazione(BaseModel):
     id: int
     dataIngresso: date
+    dataCompletata: date = Field(default=date.min)
     dataUscita: date = Field(default=date.min)
     descrizioneGuasto: str
     descrizioneRiparazione: str

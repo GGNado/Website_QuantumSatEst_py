@@ -63,3 +63,16 @@ async def cambiaPag(req: Request, id: int):
 			'rip': getRiparazioniById(id)
 		}
 	)
+
+@router.get("/{id}/completa")
+async def cambiaPag(req: Request, id: int):
+	return templates.TemplateResponse(
+		'riparazioniCompleta.html', {
+			'request': req,
+			'rip': getRiparazioniById(id)
+		}
+	)
+
+@router.put("/completa")
+async def completaRiparazione(rip: RiparazioneCompletata):
+	completeRiparazione(rip)
