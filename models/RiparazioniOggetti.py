@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 class RiparazioneInput(BaseModel):
     id: int = 0
-    descrizioneGuasto: str
+    descrizioneGuasto: str = "Default"
     descrizioneRiparazione: str = "Non ancora Riparata"
     nomeOggetto: str
     marcaOggetto: str = "Nessuna Marca"

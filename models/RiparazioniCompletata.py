@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 class RiparazioneCompletata(BaseModel):
     id: int
-    descrizioneRiparazione: str
+    descrizioneRiparazione: str = "Nessuna Riparazione"
     prezzo: float
     statoRiparazione: str
 
