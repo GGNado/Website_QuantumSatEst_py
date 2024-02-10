@@ -13,3 +13,5 @@ class RiparazioneCompletata(BaseModel):
             return 4
         elif self.statoRiparazione == "Ritirata e Pagata":
             return 5
+        elif self.statoRiparazione == "Non Riparabile":
+            return 6

@@ -76,3 +76,13 @@ async def cambiaPag(req: Request, id: int):
 @router.put("/completa")
 async def completaRiparazione(rip: RiparazioneCompletata):
 	completeRiparazione(rip)
+
+@router.get("/filtro/{fk_Cliente}/{stato}/{marca}/{modello}/{descrizioneRiparazione}/{id}")
+async def filtraRiparazioni(req: Request, fk_Cliente: int = -1, stato: int = -1, marca: str = "", modello: str = "", descrizioneRiparazione: str = "", id: int = -1):
+	return templates.TemplateResponse(
+		'riparazioni.html', {
+			'request': req,
+			'cliente': getClienteById(fk_Cliente),
+			'riparazioni': getRiparazioniFiltro(fk_Cliente, stato, marca, modello, descrizioneRiparazione, id),
+		}
+	)

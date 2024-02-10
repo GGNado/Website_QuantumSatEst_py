@@ -72,15 +72,38 @@ async function completaRiparazione(id) {
         });
 }
 
-    async function filtra() {
-    const filterTipo = document.getElementById('filterTipo').value || "nullo";
+    async function filtra(idCliente) {
+    const filterStatoElement = document.getElementById('filterStato');
+    const selectedOption = filterStatoElement.options[filterStatoElement.selectedIndex].value;
+
+    let filterStato;
+
+    switch (selectedOption) {
+        case 'In Attesa':
+            filterStato = 1;
+            break;
+        case 'Completata':
+            filterStato = 2;
+            break;
+        case 'Ritirata ma non Pagata':
+            filterStato = 4;
+            break;
+        case 'Ritirata e Pagata':
+            filterStato = 5;
+            break;
+        case 'Non riparabile':
+            filterStato = 6;
+            break;
+        default:
+            filterStato = -1;
+    }
+
     const filterMarca = document.getElementById('filterMarca').value || "nullo";
     const filterModello = document.getElementById('filterModello').value || "nullo";
-    const filterPosizione = document.getElementById('filterPosizione').value || "nullo";
-    const filterQuantita = parseInt(document.getElementById('filterQuantita').value) || -1;
+    const filterDescrizioneGuasto = document.getElementById('filterDescrizioneGuasto').value || "nullo";
+    const filterIdRiparazione = parseInt(document.getElementById('filterIdRiparazione').value) || -1;
 
-    const url = `/api/v1.0/magazzino/filtro/${filterTipo}/${filterMarca}/${filterModello}/${filterQuantita}/${filterPosizione}`;
-    //const url = `/api/v1.0/magazzino`;
+    const url = `/api/v1.0/riparazioni/filtro/${idCliente}/${filterStato}/${filterMarca}/${filterModello}/${filterDescrizioneGuasto}/${filterIdRiparazione}`;
 
     try {
         const response = await fetch(url);
@@ -96,6 +119,8 @@ async function completaRiparazione(id) {
         console.error('Si è verificato un errore durante la richiesta GET:', error);
     }
 }
+
+
 </script>
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container-fluid">
@@ -113,10 +138,7 @@ async function completaRiparazione(id) {
                     <a class="nav-link" href="/api/v1.0/clienti/">Clienti</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Riparazioni</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Oggetti Riparati</a>
+                    <a class="nav-link" href="/api/v1.0/riparazioni/">Riparazioni</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/api/v1.0/magazzino/">Magazzino</a>
@@ -126,21 +148,32 @@ async function completaRiparazione(id) {
     </div>
 </nav>
 <section class="container mt-4">
-    <!-- Sezione di Filtraggio -->
+<!-- Sezione di Filtraggio -->
 <div class="card mb-4">
     <div class="card-header">
         <div class="row">
-            <div class="col-md-6">Filtra Magazzino</div>
+            <div class="col-md-6">Filtra Riparazione</div>
             <div class="col-md-6 text-end">
-                <button class="btn btn-primary btn-sm" onclick="filtra()">Filtra</button>
+                 {% if cliente: %}
+                <button class="btn btn-primary btn-sm" onclick="filtra({{cliente.id}})">Filtra</button>
+                {%else:%}
+                <button class="btn btn-primary btn-sm" onclick="filtra(-1)">Filtra</button>
+                {%endif%}
             </div>
         </div>
     </div>
     <div class="card-body">
         <form id="filterForm" class="row g-3">
             <div class="col-md-3">
-                <label for="filterTipo" class="visually-hidden">Tipo</label>
-                <input type="text" class="form-control" id="filterTipo" name="filterTipo" placeholder="Tipo">
+                <label for="filterStato" class="visually-hidden">Stato Riparazione</label>
+                <select class="form-control" id="filterStato" name="filterStato">
+                    <option value="">Tutti</option>
+                    <option value="In Attesa">In Attesa</option>
+                    <option value="Completata">Completata</option>
+                    <option value="Ritirata ma non Pagata">Ritirata ma non Pagata</option>
+                    <option value="Ritirata e Pagata">Ritirata e Pagata</option>
+                    <option value="Non riparabile">Non riparabile</option>
+                </select>
             </div>
             <div class="col-md-3">
                 <label for="filterMarca" class="visually-hidden">Marca</label>
@@ -151,16 +184,17 @@ async function completaRiparazione(id) {
                 <input type="text" class="form-control" id="filterModello" name="filterModello" placeholder="Modello">
             </div>
             <div class="col-md-3">
-                <label for="filterQuantita" class="visually-hidden">Quantità</label>
-                <input type="number" class="form-control" id="filterQuantita" name="filterQuantita" placeholder="Quantità">
+                <label for="filterDescrizioneGuasto" class="visually-hidden">Descrizione Guasto</label>
+                <input type="text" class="form-control" id="filterDescrizioneGuasto" name="filterDescrizioneGuasto" placeholder="Descrizione Guasto">
             </div>
-            <div class="col-md-3">
-                <label for="filterPosizione" class="visually-hidden">Quantità</label>
-                <input type="text" class="form-control" id="filterPosizione" name="filterPosizione" placeholder="Posizione">
+            <div class="col-md-2">
+                <label for="filterIdRiparazione" class="visually-hidden">ID Riparazione</label>
+                <input type="text" class="form-control" id="filterIdRiparazione" name="filterIdRiparazione" placeholder="ID Riparazione">
             </div>
         </form>
     </div>
 </div>
+
     {% if cliente is none:%}
     <div class="row">
     <div class="col-md-12 mt-4">
@@ -201,9 +235,12 @@ async function completaRiparazione(id) {
                 <div>
                     <h5 class="card-text">Stato: {{ c.stato() }}</h5>
                     <p class="card-title">Descrizione Guasto: {{ c.descrizioneGuasto }}</p>
-                    <p class="card-text">Descrizione Riparazione: {{ c.descrizioneRiparazione }} </p>
-                    <p class="card-text">Prezzo: {{ c.prezzo }}</p>
-                    <p class="card-text">Cliente: {{c.clienteDaIdRip()}}</p>
+                    {%if c.descrizioneRiparazione != "None": %}
+                        <p class="card-text">Descrizione Riparazione: {{ c.descrizioneRiparazione }} </p>
+                    {%else: %}
+                        <p class="card-text">Descrizione Riparazione: Non effettuata </p>
+                    {%endif%}
+                    <p class="card-text">Prezzo: ${{ c.prezzo }}</p>
                     <p class="card-text">Data Ingresso: {{ c.dataIngresso }}</p>
                     {%if c.dataCompletata|string == "0001-01-01" %}
                         <p class="card-text">Data Completata: Non disponibile</p>
@@ -215,11 +252,15 @@ async function completaRiparazione(id) {
                     {%else:%}
                         <p class="card-text">Data Uscita: {{c.dataUscita}}</p>
                     {%endif%}
+                    <hr class="my-4">
                     <h5>Oggetto da Riparare</h5>
                     <p class="card-text">Nome: {{c.getNomeOggetto()}}</p>
                     <p class="card-text">Marca: {{c.getMarcaOggetto()}}</p>
                     <p class="card-text">Modello: {{c.getModelloOggetto()}}</p>
                     <p class="card-text">Matricola: {{c.getMatricolaOggetto()}}</p>
+                    <hr class="my-4">
+                    <h5 class="card-text">{{c.clienteDaIdRip()}}</h5>
+                    <p class="card-text">Telefono: {{c.clienteTelefono()}}</p>
                 </div>
             </div>
         </div>

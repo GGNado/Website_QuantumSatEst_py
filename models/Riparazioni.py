@@ -21,6 +21,13 @@ class Riparazione(BaseModel):
         nome = Database.getNomeCognomeClienteByRiparazioneId(self.id)
         return nome
 
+    def clienteTelefono(self):
+        if self.fk_cliente == -1:
+            return None
+
+        telefono: str = Database.getClienteById(self.fk_cliente).telefono
+        return telefono
+
     def stato(self):
         if self.fk_stato_riparazione == 1:
             return "In Attesa"
@@ -30,6 +37,8 @@ class Riparazione(BaseModel):
             return "Ritirata ma non Pagata"
         elif self.fk_stato_riparazione == 5:
             return "Ritirata e Pagata"
+        elif self.fk_stato_riparazione == 6:
+            return "Non Riparabile"
 
     def getNomeOggetto(self):
         return Database.getNameObject(self.id)

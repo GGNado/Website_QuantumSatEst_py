@@ -521,8 +521,56 @@ def completeRiparazione(rip: RiparazioneCompletata):
         cursore.close()
         connessione.close()
 
+def getRiparazioniFiltro(fk, stato, marca, modello, descrizioneRiparazione, id):
+    connessione = getConnection()
+    if connessione.is_connected():
+        # Costruisci la query in base ai valori forniti
+        QUERY = "SELECT * FROM Riparazioni JOIN Oggetti o on Riparazioni.ID = o.FK_Riparazione WHERE 1=1"
+        params = []
 
+        if stato != -1:
+            QUERY += " AND FK_StatoRiparazione = %s"
+            params.append(stato)
 
+        if marca != "nullo":
+            QUERY += " AND o.marca LIKE %s"
+            params.append(f"%{marca}%")
+
+        if modello != "nullo":
+            QUERY += " AND o.modello LIKE %s"
+            params.append(f"%{modello}%")
+
+        if descrizioneRiparazione != "nullo":
+            QUERY += " AND descrizioneGuasto LIKE %s"
+            params.append(f"%{descrizioneRiparazione}%")
+
+        if id != -1:
+            QUERY += " AND Riparazioni.id = %s"
+            params.append(id)
+
+        if fk != -1:
+            QUERY += " AND Riparazioni.FK_Cliente = %s"
+            params.append(fk)
+
+        listaRiparazioni = []
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, tuple(params))
+        results = cursore.fetchall()
+        for row in results:
+            listaRiparazioni.append(Riparazione(
+                id=int(row[0]),
+                dataIngresso=row[1],
+                dataUscita=row[2] if row[2] else date.min,
+                descrizioneGuasto=str(row[3]),
+                descrizioneRiparazione=str(row[4]),
+                prezzo=float(row[5]),
+                fk_cliente=int(row[6] if row[6] else -1),
+                fk_stato_riparazione=int(row[7]),
+                dataCompletata=row[8] if row[8] else date.min
+            ))
+        cursore.close()
+        connessione.close()
+        return listaRiparazioni
 
 
 
