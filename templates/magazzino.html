@@ -22,6 +22,10 @@
 <body>
 <script>
     async function eliminaRicambio(id) {
+    var userInput = prompt("Scrivi Conferma:");
+    if(userInput != "Conferma"){
+        return 0;
+    }
         try {
             const response = await fetch(`/api/v1.0/magazzino/${id}`, {
                 method: 'DELETE'
