@@ -76,6 +76,10 @@
                 <div class="card-body">
                     <form id="clientForm" method="post">
                         <div class="mb-3">
+                            <label for="id" class="form-label">ID</label>
+                            <input type="text" class="form-control" id="id" name="id" value="{{id + 1}}" readonly>
+                        </div>
+                        <div class="mb-3">
                             <label for="nome" class="form-label">Nome</label>
                             <input type="text" class="form-control" id="nome" name="nome" required>
                         </div>
@@ -109,6 +113,7 @@ document.getElementById('clientForm').addEventListener('submit', async function 
     const cognome = document.getElementById('cognome').value;
     const telefono = document.getElementById('telefono').value;
     const email = document.getElementById('email').value;
+    const id = document.getElementById('id').value;
 
     const formData = {
         id: 0,
@@ -130,7 +135,7 @@ document.getElementById('clientForm').addEventListener('submit', async function 
         if (response.ok) {
             console.log('Dati inviati con successo!');
             alert('Cliente aggiunto correttamente');
-             window.location.href = '/api/v1.0/clienti/';
+            window.location.href = '/api/v1.0/riparazioni/' + id;
         } else {
             console.error('Si è verificato un errore durante l\'invio dei dati.');
         }

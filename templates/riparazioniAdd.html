@@ -51,8 +51,8 @@
 
             if (response.ok) {
                 console.log('Dati inviati con successo!');
-                alert('Ricambio aggiunto correttamente');
-                window.location.href = '/api/v1.0/riparazioni/';
+                alert('Riparazione aggiunta correttamente');
+                window.location.href = '/api/v1.0/riparazioni/' + id;
             } else {
                 console.error('Si è verificato un errore durante l\'invio dei dati.');
             }

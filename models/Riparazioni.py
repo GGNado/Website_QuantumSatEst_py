@@ -52,4 +52,7 @@ class Riparazione(BaseModel):
     def getMarcaOggetto(self):
         return Database.getMarcaObject(self.id)
 
+    def getAccessorioOggetto(self):
+        return Database.getAccessorioObject(self.id)
+
 

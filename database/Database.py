@@ -322,7 +322,7 @@ def getRiparazioni():
 def getRiparazioniByFK_Cliente(id: int):
     connessione = getConnection()
     if connessione.is_connected():
-        QUERY = "SELECT * From Riparazioni WHERE FK_Cliente = %s"
+        QUERY = "SELECT * From Riparazioni WHERE FK_Cliente = %s ORDER BY ID DESC"
         listaRiparazione = []
         cursore = connessione.cursor()
         cursore.execute(QUERY, (id, ))
@@ -571,6 +571,29 @@ def getRiparazioniFiltro(fk, stato, marca, modello, descrizioneRiparazione, id):
         cursore.close()
         connessione.close()
         return listaRiparazioni
+
+def getAccessorioObject(id: int):
+    connessione = getConnection()
+    if connessione.is_connected():
+        QUERY = "SELECT extra from Oggetti WHERE FK_Riparazione = %s"
+        cursore = connessione.cursor()
+        cursore.execute(QUERY, (id,))
+        results = cursore.fetchall()
+        cursore.close()
+        connessione.close()
+        return results[0][0]
+
+def getMaxID():
+	connessione = getConnection()
+	if connessione.is_connected():
+		QUERY = "SELECT MAX(ID) from Clienti"
+		cursore = connessione.cursor()
+		cursore.execute(QUERY)
+		results = cursore.fetchall()
+		cursore.close()
+		connessione.close()
+		return results[0][0]
+
 
 
 

@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+import database.Database
 from controller.ClientiRotte import router as ClientiRotte
 from controller.MagazzinoRotte import router as MagazzinoRotte
 from controller.RiparazioniRotte import router as RiparazioniRotte

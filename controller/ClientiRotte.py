@@ -31,6 +31,7 @@ async def cambiaPag(req: Request):
 	return templates.TemplateResponse(
 		'clientiAdd.html', {
 			'request': req,
+			'id': getMaxID()
 		}
 	)
 
