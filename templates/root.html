@@ -17,6 +17,7 @@
             }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
@@ -47,11 +48,99 @@
 
 <section class="container mt-5">
     <div class="text-center">
-        <h2>Benvenuti nel nostro Centro Assistenza</h2>
+        <h2>Quantum Sat Est</h2>
         <p class="lead">Specializzati in riparazioni e assistenza tecnica</p>
-        <p>Scopri i nostri servizi di alta qualità e affidabilità</p>
     </div>
 </section>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<section class="container mt-5">
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Riparazioni In Attesa </h5>
+                    <p class="card-text" id="completedRepairs">{{inAttesa}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Riparazioni Completate</h5>
+                    <p class="card-text">{{completate}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Profitto Totale</h5>
+                    <p class="card-text" >€ {{effettivo}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" data-toggle="tooltip" data-placement="top" data-delay="500" title="Questo profitto conta anche le riparazioni non complatate">Profitto Totale non Realizzato</h5>
+                    <p class="card-text">€ {{possibile}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container mt-5">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-6 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Grafico Riparazioni per Marca</h5>
+                    <canvas id="riparazioniChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Altre colonne o contenuto della pagina -->
+    </div>
+</section>
+
+
+<script>
+        // Ottieni i dati del grafico passati da Jinja2
+
+        // Ottieni il riferimento al canvas
+        var canvas = document.getElementById('riparazioniChart').getContext('2d');
+
+        // Crea il grafico a barre
+        var graficoRiparazioni = new Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: {{marche}},
+                datasets: [{
+                    label: 'Numero di Riparazioni',
+                    data: {{numero_riparazioni}},
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+<script>
+    $(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
 </body>
 </html>

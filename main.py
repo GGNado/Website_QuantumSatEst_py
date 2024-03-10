@@ -32,9 +32,16 @@ webapp.mount(
 
 @webapp.get('/', response_class=HTMLResponse)
 async def root(req: Request):
+	marca, numero = database.Database.numeroRiparazioniPerMarca()
 	return templates.TemplateResponse(
 		'root.html', {
 			'request': req,
+			'completate': database.Database.getAllStatoRiparazioni(3),
+			'inAttesa': database.Database.getAllStatoRiparazioni(1),
+			'effettivo': database.Database.getGuadagnoEffettivo(),
+			'possibile': database.Database.getGuadagnoPossibile(),
+			"marche": marca,
+			"numero_riparazioni": numero
 		}
 	)
 

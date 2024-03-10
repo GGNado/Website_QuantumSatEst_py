@@ -594,7 +594,54 @@ def getMaxID():
 		connessione.close()
 		return results[0][0]
 
+def getAllStatoRiparazioni(stato: int):
+	connessione = getConnection()
+	if connessione.is_connected():
+		QUERY = "SELECT COUNT(*) from Riparazioni WHERE FK_StatoRiparazione = %s"
+		cursore = connessione.cursor()
+		cursore.execute(QUERY, (stato, ))
+		results = cursore.fetchall()
+		cursore.close()
+		connessione.close()
+		return results[0][0]
 
+def getGuadagnoEffettivo():
+	connessione = getConnection()
+	if connessione.is_connected():
+		QUERY = "SELECT SUM(prezzo) FROM Riparazioni WHERE FK_StatoRiparazione != 1"
+		cursore = connessione.cursor()
+		cursore.execute(QUERY)
+		results = cursore.fetchall()
+		cursore.close()
+		connessione.close()
+		return results[0][0]
+
+def getGuadagnoPossibile():
+	connessione = getConnection()
+	if connessione.is_connected():
+		QUERY = "SELECT SUM(prezzo) FROM Riparazioni"
+		cursore = connessione.cursor()
+		cursore.execute(QUERY)
+		results = cursore.fetchall()
+		cursore.close()
+		connessione.close()
+		return results[0][0]
+
+def numeroRiparazioniPerMarca():
+	connessione = getConnection()
+	if connessione.is_connected():
+		QUERY = "SELECT COUNT(*) as Numero, o.marca FROM Riparazioni JOIN Oggetti O on Riparazioni.ID = o.FK_Riparazione GROUP BY o.marca"
+		cursore = connessione.cursor()
+		cursore.execute(QUERY)
+		results = cursore.fetchall()
+		cursore.close()
+		connessione.close()
+		marca = []
+		numero = []
+		for row in results:
+			numero.append(row[0])
+			marca.append(row[1])
+		return marca, numero
 
 
 
