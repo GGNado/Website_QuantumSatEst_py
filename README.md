@@ -8,6 +8,8 @@
 
 - **Uvicorn Server**: The application runs on **Uvicorn**, a lightning-fast ASGI server that enables asynchronous capabilities and handles high loads of traffic efficiently, providing real-time responsiveness.
 
+- **Jinja Templates**: The frontend of the website uses **Jinja**, a templating engine, to dynamically render HTML pages based on data from the backend. Jinja allows for efficient generation of pages, like repair status updates or customer records, based on the data pulled from the MySQL database.
+
 - **MySQL Database Integration**: All data related to repair requests, customer details, equipment, and status are stored and managed through a **MySQL database**, ensuring data consistency and reliability.
 
 - **Repair Management System**: The system tracks repair requests, equipment status updates, customer information, and service history to provide a seamless experience for both customers and business administrators.
@@ -27,5 +29,6 @@
 - **Uvicorn**: ASGI server used to run the FastAPI app.
 - **MySQL**: Relational database used for data storage and management.
 - **Pydantic**: For data validation and type checking.
+- **Jinja**: Templating engine used for rendering dynamic HTML content based on backend data.
   
 ---
